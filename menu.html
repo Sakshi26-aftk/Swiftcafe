@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SwiftPay Café - Filterable Menu</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto&display=swap"
+    rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
@@ -14,52 +19,96 @@
       color: #3e2f2f;
       padding: 20px;
     }
+
     .title {
       font-family: 'Playfair Display', serif;
       font-size: 2.8rem;
       text-align: center;
       margin-bottom: 30px;
       color: #5c4033;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
     }
+
     .filter-container {
       text-align: center;
       margin-bottom: 40px;
     }
-    label { font-weight: bold; color: #5c4033; }
+
+    label {
+      font-weight: bold;
+      color: #5c4033;
+      margin-right: 10px;
+    }
+
     select {
       font-size: 1rem;
       padding: 10px 16px;
       border-radius: 10px;
       border: 1px solid #a67c52;
       background-color: #fff;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
       transition: 0.3s ease;
       color: #5c4033;
     }
-    select:hover { border-color: #7b4b2a; }
-    .menu-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+
+    select:hover {
+      border-color: #7b4b2a;
+    }
+
+    .menu-section {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
     .menu-section.active {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 20px;
     }
+
     .menu-item {
       background: #ffffff;
-      padding: 16px;
       border-radius: 12px;
       border: 1px solid #e0c9a6;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.3s;
+      text-align: center;
+      padding-bottom: 12px;
+      overflow: hidden;
     }
+
     .menu-item:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 15px rgba(92,64,51,0.2);
+      box-shadow: 0 10px 15px rgba(92, 64, 51, 0.2);
     }
-    .menu-item.clicked { background-color: #f7ede2; transform: scale(1.05); }
-    .item-name { font-weight: bold; font-size: 1.2rem; color: #5c4033; }
-    .item-price { color: #7b4b2a; font-size: 0.95rem; margin-top: 6px; }
+
+    .menu-item.clicked {
+      background-color: #f7ede2;
+      transform: scale(1.05);
+    }
+
+    .menu-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .item-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #5c4033;
+    }
+
+    .item-price {
+      color: #7b4b2a;
+      font-size: 1rem;
+      margin-top: 4px;
+    }
+
     .order-buttons {
       display: flex;
       justify-content: center;
@@ -68,6 +117,7 @@
       flex-wrap: wrap;
       max-width: 700px;
     }
+
     .order-buttons button {
       padding: 12px 18px;
       font-size: 1rem;
@@ -78,7 +128,10 @@
       color: #fff;
       transition: background-color 0.3s;
     }
-    .order-buttons button:hover { background-color: #7b4b2a; }
+
+    .order-buttons button:hover {
+      background-color: #7b4b2a;
+    }
 
     #ordersModal {
       display: none;
@@ -90,19 +143,39 @@
       padding: 25px;
       border-radius: 12px;
       width: 340px;
-      box-shadow: 0 0 18px rgba(0,0,0,0.25);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.25);
       z-index: 999;
       border: 1px solid #e0c9a6;
     }
-    #ordersModal h3 { margin-top: 0; font-size: 1.6rem; text-align: center; color: #5c4033; }
-    #ordersList li { margin-bottom: 10px; list-style: disc; color: #3e2f2f; }
-    .total-amount { font-weight: bold; font-size: 1.2rem; text-align: center; margin-top: 12px; color: #7b4b2a; }
+
+    #ordersModal h3 {
+      margin-top: 0;
+      font-size: 1.6rem;
+      text-align: center;
+      color: #5c4033;
+    }
+
+    #ordersList li {
+      margin-bottom: 10px;
+      list-style: disc;
+      color: #3e2f2f;
+    }
+
+    .total-amount {
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-align: center;
+      margin-top: 12px;
+      color: #7b4b2a;
+    }
+
     .order-actions {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
       margin-top: 6px;
     }
+
     .order-actions button {
       padding: 4px 8px;
       font-size: 0.85rem;
@@ -112,8 +185,22 @@
       color: white;
       border: none;
     }
-    .order-actions button:hover { background-color: #c9302c; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .order-actions button:hover {
+      background-color: #c9302c;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     .back-btn {
       background-color: #00b894;
@@ -126,7 +213,10 @@
       margin: 15px;
       transition: background 0.3s;
     }
-    .back-btn:hover { background-color: #26a69a; }
+
+    .back-btn:hover {
+      background-color: #26a69a;
+    }
   </style>
 </head>
 
@@ -159,145 +249,165 @@
     <h3>Placed Orders</h3>
     <ul id="ordersList" style="padding-left: 20px;"></ul>
     <div class="total-amount" id="totalAmount"></div>
-    <button onclick="closeOrders()" style="margin-top: 10px; background-color: #888; color: white; border: none; padding: 6px 10px; border-radius: 5px;">Close</button>
+    <button onclick="closeOrders()"
+      style="margin-top: 10px; background-color: #888; color: white; border: none; padding: 6px 10px; border-radius: 5px;">Close</button>
   </div>
 
   <button class="back-btn" onclick="goBack()">⬅ Back</button>
 
-<script>
-function goBack() { window.location.href = "customer.html"; }
+  <script>
+    function goBack() { window.location.href = "customer.html"; }
 
-const menuData = {
-  drinks: ['Mojito','Cold Coffee','Iced Tea','Lemonade','Smoothie','Milkshake','Hot Chocolate','Espresso','Green Tea','Blue Lagoon'],
-  pizzas: ['Margherita','Pepperoni','Paneer Tikka','Veggie Delight','Farmhouse','BBQ Chicken','Cheese Burst','Tandoori Paneer','Mexican Green Wave','Peri Peri'],
-  entradas: ['Tomato & Basil','Stuffed Mushrooms','Garlic Bread','Bruschetta','Nachos','Cheese Balls','French Fries','Spring Rolls','Tandoori Momos','Loaded Nachos']
-};
+    const menuData = {
+      drinks: ['Mojito', 'Cold Coffee', 'Iced Tea', 'Lemonade', 'Smoothie', 'Milkshake', 'Hot Chocolate', 'Espresso', 'Green Tea', 'Blue Lagoon'],
+      pizzas: ['Margherita', 'Pepperoni', 'Paneer Tikka', 'Veggie Delight', 'Farmhouse', 'BBQ Chicken', 'Cheese Burst', 'Tandoori Paneer', 'Mexican Green Wave', 'Peri Peri'],
+      entradas: ['Tomato salad', 'Stuffed Mushrooms', 'Garlic Bread', 'Bruschetta', 'Nachos', 'Cheese Balls', 'French Fries', 'Spring Rolls', 'Tandoori Momos', 'Loaded Nachos']
+    };
 
-const sectionMap = {
-  drinks: document.getElementById('drinks'),
-  pizzas: document.getElementById('pizzas'),
-  entradas: document.getElementById('entradas')
-};
+    const sectionMap = {
+      drinks: document.getElementById('drinks'),
+      pizzas: document.getElementById('pizzas'),
+      entradas: document.getElementById('entradas')
+    };
 
-// Populate menu dynamically
-Object.entries(menuData).forEach(([category, items]) => {
-  items.forEach((item, i) => {
-    const price = 50 + i * 10;
-    const div = document.createElement('div');
-    div.className = 'menu-item';
-    div.onclick = () => addToOrder(div, item, price);
-    div.innerHTML = `<div class='item-name'>${item}</div><div class='item-price'>₹${price}</div>`;
-    sectionMap[category].appendChild(div);
-  });
-});
+    // Populate menu dynamically with images
+    Object.entries(menuData).forEach(([category, items]) =>
+    {
+      items.forEach((item, i) =>
+      {
+        const price = 50 + i * 10;
+        const imgName = item.toLowerCase().replace(/ /g, "_") + ".jpg";
+        const imgPath = `images/menu/${imgName}`;
 
-function filterMenu() {
-  const selected = document.getElementById('category').value;
-  document.querySelectorAll('.menu-section').forEach(section => section.classList.remove('active'));
-  document.getElementById(selected).classList.add('active');
-}
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        div.onclick = () => addToOrder(div, item, price);
+        div.innerHTML = `
+      <img src="${imgPath}" alt="${item}">
+      <div class='item-name'>${item}</div>
+      <div class='item-price'>₹${price}</div>
+    `;
+        sectionMap[category].appendChild(div);
+      });
+    });
 
-function addToOrder(el, item, price) {
-  el.classList.remove('clicked');
-  requestAnimationFrame(() => {
-    el.classList.add('clicked');
-    setTimeout(() => el.classList.remove('clicked'), 400);
-  });
-
-  const currentOrders = JSON.parse(localStorage.getItem('orders')) || [];
-  const existing = currentOrders.find(o => o.item === item);
-  if (existing) existing.qty += 1;
-  else currentOrders.push({ item, price, qty: 1 });
-  localStorage.setItem('orders', JSON.stringify(currentOrders));
-  alert(item + ' added to your order!');
-}
-
-function decreaseOrder(item) {
-  const currentOrders = JSON.parse(localStorage.getItem('orders')) || [];
-  const existing = currentOrders.find(o => o.item === item);
-  if (existing) {
-    existing.qty -= 1;
-    if (existing.qty <= 0) {
-      const index = currentOrders.indexOf(existing);
-      currentOrders.splice(index, 1);
+    function filterMenu()
+    {
+      const selected = document.getElementById('category').value;
+      document.querySelectorAll('.menu-section').forEach(section => section.classList.remove('active'));
+      document.getElementById(selected).classList.add('active');
     }
-  }
-  localStorage.setItem('orders', JSON.stringify(currentOrders));
-  showOrders();
-}
 
-function showOrders() {
-  const orders = JSON.parse(localStorage.getItem('orders')) || [];
-  const list = document.getElementById('ordersList');
-  const total = document.getElementById('totalAmount');
-  list.innerHTML = '';
-  let sum = 0;
-  orders.forEach(order => {
-    sum += order.price * order.qty;
-    list.innerHTML += `
+    function addToOrder(el, item, price)
+    {
+      el.classList.remove('clicked');
+      requestAnimationFrame(() =>
+      {
+        el.classList.add('clicked');
+        setTimeout(() => el.classList.remove('clicked'), 400);
+      });
+
+      const currentOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      const existing = currentOrders.find(o => o.item === item);
+      if (existing) existing.qty += 1;
+      else currentOrders.push({ item, price, qty: 1 });
+      localStorage.setItem('orders', JSON.stringify(currentOrders));
+      alert(item + ' added to your order!');
+    }
+
+    function decreaseOrder(item)
+    {
+      const currentOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      const existing = currentOrders.find(o => o.item === item);
+      if (existing)
+      {
+        existing.qty -= 1;
+        if (existing.qty <= 0)
+        {
+          const index = currentOrders.indexOf(existing);
+          currentOrders.splice(index, 1);
+        }
+      }
+      localStorage.setItem('orders', JSON.stringify(currentOrders));
+      showOrders();
+    }
+
+    function showOrders()
+    {
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const list = document.getElementById('ordersList');
+      const total = document.getElementById('totalAmount');
+      list.innerHTML = '';
+      let sum = 0;
+      orders.forEach(order =>
+      {
+        sum += order.price * order.qty;
+        list.innerHTML += `
       <li>
         ${order.item} × ${order.qty} – ₹${order.price * order.qty}
         <div class="order-actions">
           <button onclick="decreaseOrder('${order.item}')">➖</button>
         </div>
       </li>`;
-  });
-  total.innerText = `Total: ₹${sum}`;
-  document.getElementById('ordersModal').style.display = 'block';
-}
+      });
+      total.innerText = `Total: ₹${sum}`;
+      document.getElementById('ordersModal').style.display = 'block';
+    }
 
-function closeOrders() { document.getElementById('ordersModal').style.display = 'none'; }
-function clearOrders() { localStorage.removeItem('orders'); closeOrders(); }
+    function closeOrders() { document.getElementById('ordersModal').style.display = 'none'; }
+    function clearOrders() { localStorage.removeItem('orders'); closeOrders(); }
 
-async function viewSavedOrders() {
-  try {
-    const response = await fetch("http://localhost:3000/orders");
-    const data = await response.json();
-    if (!data.length) return alert("No saved orders found.");
+    async function viewSavedOrders()
+    {
+      try
+      {
+        const response = await fetch("http://localhost:3000/orders");
+        const data = await response.json();
+        if (!data.length) return alert("No saved orders found.");
 
-    const list = document.getElementById('ordersList');
-    const total = document.getElementById('totalAmount');
-    list.innerHTML = '';
-    let sum = 0;
+        const list = document.getElementById('ordersList');
+        const total = document.getElementById('totalAmount');
+        list.innerHTML = '';
+        let sum = 0;
 
-    data.forEach(order => {
-      sum += order.price * order.qty;
-      list.innerHTML += `
+        data.forEach(order =>
+        {
+          sum += order.price * order.qty;
+          list.innerHTML += `
         <li>
           ${order.item_name} × ${order.qty} – ₹${order.price * order.qty}
         </li>`;
-    });
+        });
 
-    total.innerText = `Total: ₹${sum}`;
-    document.getElementById('ordersModal').style.display = 'block';
-  } catch (err) {
-    console.error(err);
-    alert("Failed to fetch saved orders.");
-  }
-}
+        total.innerText = `Total: ₹${sum}`;
+        document.getElementById('ordersModal').style.display = 'block';
+      } catch (err)
+      {
+        console.error(err);
+        alert("Failed to fetch saved orders.");
+      }
+    }
 
+    function printOrders()
+    {
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      if (!orders.length) return alert("No orders to print.");
+      let summary = orders.map(o => `${o.item} × ${o.qty} = ₹${o.qty * o.price}`).join('\n');
+      let total = orders.reduce((sum, o) => sum + o.qty * o.price, 0);
+      const newWin = window.open('', '', 'width=400,height=600');
+      newWin.document.write(`<pre>SwiftPay Café\n\n${summary}\n\nTotal: ₹${total}</pre>`);
+      newWin.print();
+      newWin.close();
+    }
 
-function printOrders() {
-  const orders = JSON.parse(localStorage.getItem('orders')) || [];
-  if (!orders.length) return alert("No orders to print.");
-  let summary = orders.map(o => `${o.item} × ${o.qty} = ₹${o.qty * o.price}`).join('\n');
-  let total = orders.reduce((sum, o) => sum + o.qty * o.price, 0);
-  const newWin = window.open('', '', 'width=400,height=600');
-  newWin.document.write(`<pre>SwiftPay Café\n\n${summary}\n\nTotal: ₹${total}</pre>`);
-  newWin.print();
-  newWin.close();
-}
-
-function proceedToPayment() {
-  const orders = JSON.parse(localStorage.getItem('orders')) || [];
-  if (!orders.length) return alert("No items in your order to proceed.");
-
-  // Save orders for payment page
-  localStorage.setItem('paymentOrders', JSON.stringify(orders));
-
-  // Redirect to payment page
-  window.location.href = 'foodpayment.html';
-}
-</script>
+    function proceedToPayment()
+    {
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      if (!orders.length) return alert("No items in your order to proceed.");
+      localStorage.setItem('paymentOrders', JSON.stringify(orders));
+      window.location.href = 'foodpayment.html';
+    }
+  </script>
 </body>
+
 </html>
