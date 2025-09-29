@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SwiftCafe Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f6fa;
+      color: #333;
+    }
+
+    .settings-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 25px;
+      color: #c62828;
+    }
+
+    .setting-group {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    input[type="file"] {
+      padding: 5px;
+    }
+
+    .preview-logo {
+      margin-top: 10px;
+      max-height: 80px;
+    }
+
+    .setting-checkboxes label {
+      display: inline-block;
+      margin-right: 20px;
+    }
+
+    .save-btn {
+      padding: 12px 24px;
+      background-color: #ad1457;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .save-btn:hover {
+      background-color: #880e4f;
+    }
+
+    .activity-log {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .activity-log p {
+      font-size: 14px;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <h1>⚙️ SwiftCafe Settings</h1>
+
+    <div class="setting-group">
+      <label for="cafeName">Cafe Name</label>
+      <input type="text" id="cafeName" placeholder="Enter Cafe Name">
+    </div>
+
+    <div class="setting-group">
+      <label for="theme">Choose Theme</label>
+      <select id="theme">
+        <option value="default">Default</option>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </div>
+
+    <div class="setting-group">
+      <label for="language">Language</label>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="mr">Marathi</option>
+        <option value="hi">Hindi</option>
+      </select>
+    </div>
+
+    <div class="setting-group">
+      <label>Notifications</label>
+      <div class="setting-checkboxes">
+        <label><input type="checkbox" id="stockAlert"> Show Low Stock Alerts</label>
+        <label><input type="checkbox" id="orderSound"> Enable Order Sound</label>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label for="openingHours">Opening Hours</label>
+      <input type="text" id="openingHours" placeholder="e.g. 8 AM - 10 PM">
+    </div>
+
+    <div class="setting-group">
+      <label for="cafeLogo">Upload Cafe Logo</label>
+      <input type="file" id="cafeLogo">
+      <img id="logoPreview" class="preview-logo" src="" alt="Logo Preview"/>
+    </div>
+
+    <div class="setting-group">
+      <label for="password">New Password</label>
+      <input type="password" id="password" placeholder="Enter new password">
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" placeholder="Confirm password">
+    </div>
+
+    <div class="setting-group">
+      <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+    </div>
+
+    <div class="setting-group">
+      <label>Activity Log</label>
+      <div class="activity-log" id="activityLog">
+        <p>Logged in as Admin</p>
+        <p>Viewed Inventory</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function saveSettings() {
+      const name = document.getElementById("cafeName").value;
+      const theme = document.getElementById("theme").value;
+      const lang = document.getElementById("language").value;
+      const stockAlert = document.getElementById("stockAlert").checked;
+      const orderSound = document.getElementById("orderSound").checked;
+      const openingHours = document.getElementById("openingHours").value;
+
+      localStorage.setItem("cafeName", name);
+      localStorage.setItem("theme", theme);
+      localStorage.setItem("language", lang);
+      localStorage.setItem("stockAlert", stockAlert);
+      localStorage.setItem("orderSound", orderSound);
+      localStorage.setItem("openingHours", openingHours);
+
+      alert("Settings saved locally!");
+    }
+
+    document.getElementById("cafeLogo").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          document.getElementById("logoPreview").src = evt.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

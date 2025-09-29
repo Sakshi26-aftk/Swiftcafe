@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftCafe - Order History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background: #ffc107;
+            color: #000;
+        }
+
+        tr:nth-child(even) {
+            background: #f3f3f3;
+        }
+
+        tr:hover {
+            background: #ffe8a1;
+        }
+
+        .status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .status.pending {
+            background: #ffeb99;
+            color: #a67c00;
+        }
+
+        .status.completed {
+            background: #b8f2b8;
+            color: #0a7f00;
+        }
+
+        .status.cancelled {
+            background: #f2b8b8;
+            color: #a70000;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 10px 18px;
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: #26a69a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Order History</h1>
+        <table id="ordersTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total (₹)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="6" style="text-align:center;">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+        <a class="back-btn" href="admin.html">⬅ Back to Dashboard</a>
+    </div>
+
+    <script>
+        async function loadOrderHistory()
+        {
+            try
+            {
+                const res = await fetch('http://localhost:3000/admin/orders'); // your backend endpoint
+                const orders = await res.json();
+
+                const tbody = document.getElementById('ordersTable').querySelector('tbody');
+                tbody.innerHTML = '';
+
+                if (!orders || !orders.length)
+                {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No orders found.</td></tr>';
+                    return;
+                }
+
+                orders.forEach(order =>
+                {
+                    const itemsList = order.items.map(i => `${i.name} × ${i.qty}`).join(', ');
+                    const statusClass = order.status.toLowerCase(); // pending/completed/cancelled
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+        <td>${order._id}</td>
+        <td>${new Date(order.date).toLocaleString()}</td>
+        <td>${order.customerName}</td>
+        <td>${itemsList}</td>
+        <td>₹${order.total}</td>
+        <td><span class="status ${statusClass}">${order.status}</span></td>
+      `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err)
+            {
+                console.error(err);
+                const tbody = document.getElementById('ordersTable').querySelector('tbody');
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Failed to load orders.</td></tr>';
+            }
+        }
+
+        loadOrderHistory();
+    </script>
+
+</body>
+
+</html>
