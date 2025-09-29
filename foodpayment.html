@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftPay Café - Payment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: #fffaf5;
+    padding: 20px;
+    color: #3e2f2f;
+  }
+  h2 {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    color: #5c4033;
+  }
+  #orderSummary {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #e0c9a6;
+    border-radius: 10px;
+    background: #fff;
+  }
+  ul {
+    padding-left: 20px;
+  }
+  .total {
+    font-weight: bold;
+    margin-top: 12px;
+    text-align: right;
+    color: #7b4b2a;
+  }
+  #qrcode {
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+  }
+  .back-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 18px;
+    background-color: #00b894;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .back-btn:hover {
+    background-color: #26a69a;
+  }
+</style>
+</head>
+<body>
+
+<h2>SwiftPay Café - Payment</h2>
+
+<div id="orderSummary">
+  <h3>Your Order</h3>
+  <ul id="ordersList"></ul>
+  <div class="total" id="totalAmount"></div>
+</div>
+
+<div id="qrcode"></div>
+
+<button class="back-btn" onclick="goBack()">⬅ Back to Menu</button>
+
+<script>
+function goBack() {
+  window.location.href = 'menu.html';
+}
+
+// Fetch orders from localStorage
+const orders = JSON.parse(localStorage.getItem('paymentOrders')) || [];
+const ordersList = document.getElementById('ordersList');
+let total = 0;
+
+orders.forEach(o => {
+  const subtotal = o.price * o.qty;
+  total += subtotal;
+  const li = document.createElement('li');
+  li.textContent = `${o.item} × ${o.qty} = ₹${subtotal}`;
+  ordersList.appendChild(li);
+});
+
+document.getElementById('totalAmount').textContent = `Total: ₹${total}`;
+
+// Generate QR code for payment
+// You can replace this with Razorpay/UPI link
+const paymentInfo = {
+  amount: total,
+  items: orders.map(o => `${o.item} x${o.qty}`).join(', ')
+};
+const qrData = `upi://pay?pa=merchant@upi&pn=SwiftPayCafé&am=${total}&cu=INR&tn=${encodeURIComponent(paymentInfo.items)}`;
+
+new QRCode(document.getElementById("qrcode"), {
+  text: qrData,
+  width: 200,
+  height: 200
+});
+</script>
+
+</body>
+</html>

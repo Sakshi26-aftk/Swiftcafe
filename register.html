@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login / Register - SwiftPay</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: Arial, sans-serif; 
+    }
+
+    body { 
+      background-color: #ffffff;
+      color: #000;
+    }
+
+    /* Navbar */
+    nav {
+      background-color: #d2b48c;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    nav .logo {
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: bold;
+      color: #4b2e2e;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #4b2e2e;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #2c1810;
+    }
+
+    /* Container */
+    .container {
+      background: rgba(210,180,140,0.85);
+      padding: 30px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 0 12px rgba(210,180,140,0.8);
+      margin: 150px auto;
+      text-align: center;
+    }
+
+    h2 { 
+      margin-bottom: 20px; 
+      font-size: 24px; 
+      color: #4b2e2e;
+      text-align: center;
+    }
+
+    form { 
+      display: flex; 
+      flex-direction: column; 
+    }
+
+    label { 
+      margin-bottom: 5px; 
+      font-size: 14px; 
+      color: #4b2e2e; 
+      font-weight: bold;
+    }
+
+    input, select {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #4b2e2e;
+      border-radius: 5px;
+      background: #fff;
+      color: #4b2e2e;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus, select:focus { 
+      outline: none; 
+      border-color: #2c1810; 
+      box-shadow: 0 0 5px #2c1810;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #4b2e2e;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover { 
+      background-color: #2c1810; 
+    }
+
+    .switch { 
+      text-align: center; 
+      margin-top: 10px; 
+      font-size: 14px; 
+      color: #4b2e2e; 
+      cursor: pointer; 
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">SwiftPay</div>
+    <ul>
+      <li><a href="homepage.html">Home</a></li>
+      <li><a href="#" onclick="showLogin()">Login</a></li>
+      <li><a href="#" onclick="showRegister()">Register</a></li>
+    </ul>
+  </nav>
+
+  <!-- Login/Register Container -->
+  <div class="container">
+
+    <!-- Login Form -->
+    <div id="loginBox">
+      <h2>Login</h2>
+      <form onsubmit="login(event)">
+        <label for="loginUser">Username</label>
+        <input type="text" id="loginUser" placeholder="Enter your username" required>
+
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" placeholder="Enter your password" required>
+
+        <button type="submit">Login</button>
+      </form>
+      <p class="switch" onclick="showRegister()">Don't have an account? Register Now</p>
+    </div>
+
+    <!-- Registration Form -->
+    <div id="registerBox" class="hidden">
+      <h2>Register</h2>
+      <form onsubmit="return register(event)">
+        <label for="regUsername">Username</label>
+        <input type="text" id="regUsername" placeholder="Enter a username" 
+               required pattern="^[A-Za-z0-9_]{3,}$" 
+               title="3+ characters, letters, numbers, underscores">
+
+        <label for="regUser">Full Name</label>
+        <input type="text" id="regUser" placeholder="John Doe" 
+               required pattern="^[A-Za-z ]{3,}$" 
+               title="Name must contain only letters and spaces (min 3 characters)">
+
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="john@example.com" required>
+
+        <label for="regRole">Select Role</label>
+        <select id="regRole" required>
+          <option value="customer">Customer</option>
+          <option value="admin">Admin</option>
+        </select>
+
+        <label for="regPass">Password</label>
+        <input type="password" id="regPass" placeholder="Create a password" required>
+
+        <label for="regConfirmPass">Confirm Password</label>
+        <input type="password" id="regConfirmPass" placeholder="Confirm password" required>
+
+        <button type="submit">Register</button>
+      </form>
+      <p class="switch" onclick="showLogin()">Already have an account? Login here</p>
+    </div>
+
+  </div>
+
+  <script>
+    function showRegister() {
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("registerBox").classList.remove("hidden");
+    }
+
+    function showLogin() {
+      document.getElementById("registerBox").classList.add("hidden");
+      document.getElementById("loginBox").classList.remove("hidden");
+    }
+
+    async function register(event) {
+      event.preventDefault();
+
+      const username = document.getElementById("regUsername").value.trim();
+      const name = document.getElementById("regUser").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const role = document.getElementById("regRole").value;
+      const pass = document.getElementById("regPass").value;
+      const confirmPass = document.getElementById("regConfirmPass").value;
+
+      if (!username.match(/^[A-Za-z0-9_]{3,}$/)) {
+        alert("Username must be 3+ characters (letters, numbers, underscores).");
+        return false;
+      }
+
+      if (!name.match(/^[A-Za-z ]{3,}$/)) {
+        alert("Name must be at least 3 characters and contain only letters/spaces.");
+        return false;
+      }
+
+      if (pass !== confirmPass) {
+        alert("Passwords do not match.");
+        return false;
+      }
+
+      // Send registration data to backend
+      try {
+        const res = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, name, email, role, password: pass })
+        });
+
+        const data = await res.json();
+        alert(data.message || "Registration successful!");
+        showLogin(); // switch to login after registration
+      } catch (err) {
+        console.error(err);
+        alert("Registration failed, check console for details.");
+      }
+
+      return false;
+    }
+async function login(e) {
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+
+  try {
+    const res = await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    console.log(data);
+
+    if(data.role === 'admin') {
+      // Store user info in localStorage
+      localStorage.setItem('loggedInUser', JSON.stringify(data));
+      window.location.href = 'admin.html';
+    }
+    else if(data.role === 'customer') {
+      // Store user info in localStorage
+      localStorage.setItem('loggedInUser', JSON.stringify(data));
+      window.location.href = 'customer.html';
+    }
+    else alert(data.error || 'Login failed');
+  } catch(err) {
+    console.error(err);
+    alert("Login failed, check console for details.");
+  }
+}
+
+  </script>
+
+</body>
+</html>

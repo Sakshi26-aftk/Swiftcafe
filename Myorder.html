@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - SwiftCafe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Playfair+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #3e2723;
+      --accent: #a0522d;
+      --card-bg: #f5e6d3;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: var(--accent);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* Orders Section */
+    .orders-container {
+      max-width: 900px;
+      margin: 60px auto 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      color: var(--accent);
+      margin-bottom: 30px;
+    }
+
+    .order-card {
+      background-color: var(--card-bg);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .order-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .order-details span {
+      display: block;
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .order-card button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .order-card button:hover {
+      background-color: #8b4513;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .action-buttons button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      transition: 0.3s;
+    }
+
+    .action-buttons button:hover {
+      background-color: #8b4513;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="#" class="navbar-brand">SwiftCafe</a>
+</nav>
+
+<!-- Orders Section -->
+<div class="orders-container">
+  <h1>My Orders</h1>
+  <div id="orders-list"></div>
+
+  <div class="action-buttons">
+    <button onclick="clearOrders()">🗑️ Clear All Orders</button>
+    <button onclick="proceedToPayment()">💳 Proceed to Payment</button>
+  </div>
+</div>
+
+<script>
+  // Fetch orders from localStorage
+  let orders = JSON.parse(localStorage.getItem('orders')) || [];
+  const ordersList = document.getElementById('orders-list');
+
+  function renderOrders() {
+    ordersList.innerHTML = '';
+    if(orders.length === 0){
+      ordersList.innerHTML = '<p style="text-align:center; color:#3e2723;">No orders yet.</p>';
+      return;
+    }
+    orders.forEach((order, index) => {
+      const div = document.createElement('div');
+      div.className = 'order-card';
+      div.innerHTML = `
+        <div class="order-details">
+          <span><strong>${order.itemName}</strong></span>
+          <span>Quantity: ${order.quantity}</span>
+          <span>Price: ₹${order.price}</span>
+          <span>Table: ${order.table || 'N/A'}</span>
+        </div>
+        <button onclick="removeOrder(${index})">❌ Remove</button>
+      `;
+      ordersList.appendChild(div);
+    });
+  }
+
+  function removeOrder(index) {
+    orders.splice(index,1);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    renderOrders();
+  }
+
+  function clearOrders() {
+    if(orders.length===0) return alert("No orders to clear.");
+    if(confirm("Are you sure you want to clear all orders?")) {
+      orders=[];
+      localStorage.removeItem('orders');
+      renderOrders();
+    }
+  }
+
+  function proceedToPayment() {
+    if(orders.length === 0) return alert("No orders to proceed.");
+    sessionStorage.setItem("paymentOrders", JSON.stringify(orders));
+    window.location.href = "bookingspayment.html"; // Redirect to payment page
+  }
+
+  renderOrders();
+</script>
+
+</body>
+</html>

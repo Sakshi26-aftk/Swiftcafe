@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SwiftPay Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family: 'Roboto', sans-serif; }
+    body { background-color: #ffffff; color: #4b2e2e; min-height: 100vh; padding: 20px; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #d2b48c;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    nav .logo { font-family:'Poppins', sans-serif; font-size:24px; font-weight:700; color:#4b2e2e; }
+    nav a { color:#4b2e2e; text-decoration:none; font-weight:bold; margin-left:20px; transition: color 0.3s; }
+    nav a:hover { color:#2c1810; }
+
+    h1 { text-align:center; font-family:'Poppins', sans-serif; margin-bottom:25px; font-size:28px; color:#4b2e2e; }
+
+    .tabs { display:flex; justify-content:center; margin-bottom:20px; gap:10px; }
+    .tab { padding:10px 20px; border-radius:8px; cursor:pointer; background:#d2b48c; font-weight:600; transition:0.3s; }
+    .tab.active { background:#4b2e2e; color:#fff; }
+
+    .container { max-width:900px; margin:0 auto; }
+    .search { width:100%; padding:12px; margin-bottom:20px; border-radius:8px; border:1px solid #4b2e2e; font-size:14px; }
+
+    .session-card { background:#f5e1cd; padding:16px; margin-bottom:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition:0.2s; }
+    .session-card:hover { transform: translateY(-3px); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+    .session-title { font-weight:600; font-size:16px; color:#4b2e2e; }
+    .session-time { font-size:14px; color:#6b4a3a; }
+    .session-price { font-size:14px; color:#4b2e2e; margin-top:4px; }
+    .session-table { font-size:14px; color:#4b2e2e; margin-top:2px; }
+
+    .book-btn { padding:8px 14px; border:none; border-radius:6px; background:#4b2e2e; color:#fff; font-weight:600; cursor:pointer; transition:0.3s; }
+    .book-btn:hover { background:#2c1810; }
+    .book-btn:disabled { background:#ccc; cursor:not-allowed; color:#888; }
+
+    .bookings { margin-top:30px; }
+    .bookings h2 { margin-bottom:12px; color:#4b2e2e; font-family:'Poppins',sans-serif; }
+    .booking-item { background:#f5e1cd; border:1px solid #d2b48c; padding:10px; border-radius:8px; margin-bottom:10px; font-size:14px; color:#4b2e2e; display:flex; justify-content:space-between; align-items:center; }
+    .booking-item button { background:#4b2e2e; color:#fff; border:none; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:12px; transition:0.3s; }
+    .booking-item button:hover { background:#2c1810; }
+
+    .action-buttons { display:flex; justify-content:center; gap:12px; margin:20px auto; flex-wrap:wrap; }
+    .action-buttons button { padding:10px 16px; border-radius:8px; border:none; font-weight:600; cursor:pointer; background:#4b2e2e; color:#fff; transition:0.3s; }
+    .action-buttons button:hover { background:#2c1810; }
+
+    .confirm-modal {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .confirm-content {
+      background:#ffffff;
+      color:#4b2e2e;
+      padding:30px;
+      border-radius:12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.3);
+      text-align:center;
+    }
+    .confirm-content h2 { margin-bottom:20px; font-family:'Poppins',sans-serif; }
+    .confirm-content ul { text-align:left; margin-bottom:20px; padding-left:20px; }
+    .confirm-content li { margin-bottom:10px; }
+    .confirm-content button { padding:10px 20px; border:none; border-radius:8px; margin:5px; cursor:pointer; font-weight:600; }
+    .confirm-back { background:#d2b48c; color:#4b2e2e; }
+    .confirm-back:hover { background:#c1a470; }
+    .confirm-pay { background:#4b2e2e; color:#fff; }
+    .confirm-pay:hover { background:#2c1810; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">SwiftPay</div>
+    <div>
+      <a href="#">Home</a>
+      <a href="#">Login</a>
+    </div>
+  </nav>
+
+  <h1>Book Your Table</h1>
+
+  <div class="tabs">
+    <div class="tab active" data-cat="business">Business</div>
+    <div class="tab" data-cat="family">Family</div>
+    <div class="tab" data-cat="friends">Friends</div>
+  </div>
+
+  <div class="container">
+    <input type="text" class="search" placeholder="Search session..." />
+    <div id="session-list"></div>
+
+    <div class="action-buttons">
+      <button onclick="viewBookings()">📦 View Bookings</button>
+      <button onclick="clearBookings()">🗑️ Clear Bookings</button>
+      <button onclick="showConfirmation()">💳 Proceed to Payment</button>
+    </div>
+
+    <div class="bookings">
+      <h2>📌 My Bookings</h2>
+      <div id="my-bookings"></div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-content">
+      <h2>Confirm Your Bookings</h2>
+      <ul id="confirmList"></ul>
+      <button class="confirm-back" onclick="closeConfirmation()">← Back</button>
+      <button class="book-btn" onclick="proceedToPayment()">💳 Proceed to Payment</button>
+    </div>
+  </div>
+
+<script>
+// Sessions with unique table numbers
+const sessions = {
+  business: [
+    { id: 1, title: "Client Meeting", time: "10:00 – 11:00 AM", cap: 4, price: 200, tables: [101,102,103,104] },
+    { id: 2, title: "Startup Pitch Desk", time: "1:00 – 2:00 PM", cap: 6, price: 200, tables: [105,106,107,108,109,110] },
+    { id: 3, title: "Networking Hour", time: "4:00 – 5:00 PM", cap: 10, price: 200, tables: [111,112,113,114,115,116,117,118,119,120] }
+  ],
+  family: [
+    { id: 4, title: "Parent Gathering", time: "11:00 – 12:00 PM", cap: 8, price: 150, tables: [201,202,203,204,205,206,207,208] },
+    { id: 5, title: "Family Lunch", time: "1:30 – 2:30 PM", cap: 12, price: 150, tables: [209,210,211,212,213,214,215,216,217,218,219,220,221] },
+    { id: 6, title: "Kids Zone Fun", time: "3:00 – 4:00 PM", cap: 6, price: 150, tables: [222,223,224,225,226,227] }
+  ],
+  friends: [
+    { id: 7, title: "Board Games", time: "2:00 – 3:00 PM", cap: 5, price: 100, tables: [301,302,303,304,305] },
+    { id: 8, title: "Friends Catchup", time: "5:00 – 6:00 PM", cap: 7, price: 100, tables: [306,307,308,309,310,311,312] },
+    { id: 9, title: "Live Acoustic Night", time: "7:00 – 8:00 PM", cap: 15, price: 100, tables: [313,314,315,316,317,318,319,320,321,322,323,324,325,326,327] }
+  ]
+};
+
+let currentCat = 'business';
+let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+// Tab & search elements
+const tabs = document.querySelectorAll('.tab');
+const sessionList = document.getElementById('session-list');
+const searchInput = document.querySelector('.search');
+const myBookings = document.getElementById('my-bookings');
+const confirmModal = document.getElementById('confirmModal');
+const confirmList = document.getElementById('confirmList');
+
+// Tab switching
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentCat = tab.dataset.cat;
+    searchInput.value = '';
+    renderSessions();
+  });
+});
+
+searchInput.addEventListener('input', renderSessions);
+
+// Render sessions
+function renderSessions() {
+  const keyword = searchInput.value.toLowerCase();
+  const list = sessions[currentCat].filter(session => session.title.toLowerCase().includes(keyword));
+  sessionList.innerHTML = '';
+  list.forEach(session => {
+    const bookedTables = bookings.filter(b => b.title===session.title && b.category===currentCat).map(b => b.tableNo);
+    const availableTables = session.tables.filter(t => !bookedTables.includes(t));
+    const card = document.createElement('div');
+    card.className = 'session-card';
+    card.innerHTML = `
+      <div>
+        <div class="session-title">${session.title}</div>
+        <div class="session-time">${session.time}</div>
+        <div class="session-price">Price: ₹${session.price}</div>
+        <div class="session-table">Available Tables: ${availableTables.join(', ') || 'None'}</div>
+      </div>
+      <button class="book-btn" ${availableTables.length===0?'disabled':''}>
+        ${availableTables.length>0?`Book (${availableTables.length})`:'Full'}
+      </button>
+    `;
+
+    const btn = card.querySelector('button');
+    btn.addEventListener('click', () => {
+      if(availableTables.length <= 0) return;
+      const tableNo = availableTables[0]; // assign first available table
+      bookings.push({ title: session.title, time: session.time, category: currentCat, price: session.price, tableNo });
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      renderSessions();
+      renderBookings();
+    });
+
+    sessionList.appendChild(card);
+  });
+  if(list.length === 0) sessionList.innerHTML = "<p>No sessions found.</p>";
+}
+
+// Render bookings
+function renderBookings() {
+  myBookings.innerHTML = '';
+  if(bookings.length === 0) { myBookings.innerHTML = "<p>No bookings yet.</p>"; return; }
+  bookings.forEach((b,index) => {
+    const div = document.createElement("div");
+    div.className = "booking-item";
+    div.innerText = `${b.title} (${b.time}) - ${b.category} | Table: ${b.tableNo} | ₹${b.price}`;
+    const delBtn = document.createElement("button");
+    delBtn.innerText = "❌";
+    delBtn.onclick = () => {
+      bookings.splice(index,1);
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      renderSessions();
+      renderBookings();
+    };
+    div.appendChild(delBtn);
+    myBookings.appendChild(div);
+  });
+}
+
+function viewBookings() { renderBookings(); }
+function clearBookings() { bookings=[]; localStorage.removeItem("bookings"); renderSessions(); renderBookings(); alert("All bookings cleared 🗑️"); }
+
+function showConfirmation() {
+  if(bookings.length===0) return alert("No bookings to confirm.");
+  confirmList.innerHTML='';
+  bookings.forEach(b => {
+    const li = document.createElement('li');
+    li.innerText = `${b.title} (${b.time}) - ${b.category} | Table: ${b.tableNo} | ₹${b.price}`;
+    confirmList.appendChild(li);
+  });
+  confirmModal.style.display='flex';
+}
+
+function closeConfirmation() { confirmModal.style.display='none'; }
+
+function proceedToPayment() {
+  if(bookings.length === 0) return alert("No bookings to proceed.");
+  sessionStorage.setItem("paymentBookings", JSON.stringify(bookings));
+  window.location.href = "payment.html";
+}
+
+// Initial render
+renderSessions();
+renderBookings();
+btn.addEventListener('click', () => {
+  if(session.cap <= 0) return;
+
+  // Generate a table number (e.g., first available number)
+  const tableNo = session.cap + 1; // Example: if cap=4, tableNo=5
+  session.cap--;
+
+  bookings.push({ 
+    title: session.title, 
+    time: session.time, 
+    category: currentCat, 
+    price: session.price,
+    tableNo: tableNo  // Add this line
+  });
+
+  localStorage.setItem("bookings", JSON.stringify(bookings));
+  renderSessions();
+  renderBookings();
+});
+function showConfirmation() {
+  if(bookings.length===0) return alert("No bookings to confirm.");
+  confirmList.innerHTML = '';
+  bookings.forEach(b => {
+    const li = document.createElement('li');
+    li.innerText = `${b.title} (${b.time}) - ${b.category} | Table: ${b.tableNo} | ₹${b.price}`;
+    confirmList.appendChild(li);
+  });
+  confirmModal.style.display='flex';
+}
+
+</script>
+
+</body>
+</html>

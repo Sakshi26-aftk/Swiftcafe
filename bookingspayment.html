@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftPay Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Roboto', sans-serif; }
+    body { background:#ffffff; color:#4b2e2e; padding:20px; min-height:100vh; }
+
+    h1 { text-align:center; font-family:'Poppins', sans-serif; margin-bottom:20px; }
+    .container { max-width:800px; margin:0 auto; }
+    .booking-item { background:#f5e1cd; padding:12px; border-radius:10px; margin-bottom:12px; display:flex; justify-content:space-between; }
+    .booking-item span { font-weight:500; }
+    .total { text-align:right; margin-top:20px; font-size:18px; font-weight:600; }
+    .pay-btn { display:block; width:100%; padding:12px; background:#4b2e2e; color:#fff; border:none; border-radius:8px; font-size:16px; cursor:pointer; margin-top:20px; transition:0.3s; }
+    .pay-btn:hover { background:#2c1810; }
+  </style>
+</head>
+<body>
+
+  <h1>Confirm & Pay</h1>
+
+  <div class="container">
+    <div id="booking-list"></div>
+    <div class="total" id="total-price"></div>
+    <button class="pay-btn" id="payBtn">💳 Pay Now</button>
+  </div>
+
+  <script>
+    // Fetch bookings from sessionStorage
+    const bookings = JSON.parse(sessionStorage.getItem("paymentBookings")) || [];
+    const bookingList = document.getElementById("booking-list");
+    const totalPriceEl = document.getElementById("total-price");
+    const payBtn = document.getElementById("payBtn");
+
+    let total = 0;
+
+    if(bookings.length === 0) {
+      bookingList.innerHTML = "<p>No bookings found. Please go back and select your tables.</p>";
+      payBtn.disabled = true;
+    } else {
+      bookings.forEach(b => {
+        const div = document.createElement("div");
+        div.className = "booking-item";
+        div.innerHTML = `<span>${b.title} (${b.time}) - ${b.category} | Table: ${b.tableNo}</span> <span>₹${b.price}</span>`;
+        bookingList.appendChild(div);
+        total += b.price;
+      });
+      totalPriceEl.innerText = `Total: ₹${total}`;
+    }
+
+    // Simulate payment
+    payBtn.addEventListener('click', () => {
+      alert(`Payment of ₹${total} successful! 🎉`);
+      // Clear session storage and local storage for bookings
+      sessionStorage.removeItem("paymentBookings");
+      localStorage.removeItem("bookings");
+      window.location.href = "customer.html"; // redirect to home after payment
+    });
+  </script>
+
+</body>
+</html>

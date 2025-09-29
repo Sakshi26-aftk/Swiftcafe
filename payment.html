@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SwiftPay Café - Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #fffaf5, #f5e6d3);
+      color: #3e2f2f;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { font-family: 'Playfair Display', serif; color: #5c4033; margin-bottom: 20px; }
+    #orderSummary { margin-bottom: 30px; text-align: left; display: inline-block; }
+    #orderSummary ul { padding-left: 20px; }
+    #orderSummary li { margin-bottom: 8px; }
+    .total { font-weight: bold; margin-top: 12px; color: #7b4b2a; font-size: 1.2rem; }
+    #qrImage { margin: 20px 0; display: block; margin-left: auto; margin-right: auto; }
+    .pay-btn, .back-btn {
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      margin: 10px;
+      transition: 0.3s;
+    }
+    .pay-btn { background-color: #00b894; }
+    .pay-btn:hover { background-color: #26a69a; }
+    .back-btn { background-color: #a67c52; }
+    .back-btn:hover { background-color: #7b4b2a; }
+  </style>
+</head>
+<body>
+  <h1>SwiftPay Café - Payment</h1>
+  <div id="orderSummary">
+    <h3>Your Order</h3>
+    <ul id="ordersList"></ul>
+    <div class="total" id="totalAmount"></div>
+  </div>
+
+  <!-- QR code image -->
+  <img id="qrImage" src="qr.code.jpg" alt="QR Code" style="width:200px; height:200px; display:block; margin: 20px auto;">
+
+
+  <button class="pay-btn" onclick="payNow()">💳 Pay Now</button>
+  <button class="back-btn" onclick="goBack()">⬅ Back to Menu</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    function goBack() {
+      window.location.href = 'menu.html';
+    }
+
+    const orders = JSON.parse(localStorage.getItem('paymentOrders')) || [];
+    const ordersList = document.getElementById('ordersList');
+    const totalAmount = document.getElementById('totalAmount');
+    const qrImage = document.getElementById('qrImage');
+
+    if (!orders.length) {
+      ordersList.innerHTML = '<li>No items in your order.</li>';
+      totalAmount.innerText = '';
+      qrImage.style.display = 'none';
+    } else {
+      let total = 0;
+      orders.forEach(order => {
+        const subtotal = order.price * order.qty;
+        total += subtotal;
+        ordersList.innerHTML += `<li>${order.item} × ${order.qty} = ₹${subtotal}</li>`;
+      });
+      totalAmount.innerText = `Total: ₹${total}`;
+
+      // Generate QR code in hidden div
+      const qrDiv = document.createElement('div');
+      const qrData = orders.map(o => `${o.item} × ${o.qty}`).join(', ') + ` | Total: ₹${total}`;
+      new QRCode(qrDiv, { text: qrData, width: 200, height: 200 });
+
+      // Convert canvas to image
+      setTimeout(() => {
+        const canvas = qrDiv.querySelector('canvas');
+        if (canvas) qrImage.src = canvas.toDataURL("image/png");
+      }, 100);
+    }
+
+    function payNow() {
+      alert("Payment successful! Thank you for your order.");
+      localStorage.removeItem('paymentOrders'); 
+      window.location.href = 'menu.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SwiftCafe - My Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+
+  <style>
+    :root {
+      --bg: #1a1a1a;
+      --text: #f4f4f4;
+      --accent: #ffc107;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Poppins", sans-serif;
+    }
+    .navbar { background: #111; }
+    .navbar-brand { color: var(--accent) !important; font-weight: bold; }
+    .sidebar {
+      position: fixed;
+      top: 0; left: -250px;
+      height: 100%; width: 250px;
+      background: #111; padding: 60px 20px;
+      transition: left 0.4s ease; z-index: 1040;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar a {
+      display: block; color: white; padding: 10px 0;
+      text-decoration: none; font-size: 18px;
+      transition: all 0.3s;
+    }
+    .sidebar a:hover { background: var(--accent); color: #000; padding-left: 10px; }
+
+    .profile-card {
+      background: #222; padding: 20px; border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .profile-pic { width: 100px; height: 100px; border-radius: 50%; }
+    .order-table th, .order-table td { color: var(--text); }
+    .btn-edit { background: var(--accent); border: none; color: #000; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <a href="main.html">🏠 Home</a>
+  <a href="menus.html">📋 Menu</a>
+  <a href="Shop.html">🛒 Shop</a>
+  <a href="#about">ℹ️ About Us</a>
+  <a href="#contact">📞 Contact</a>
+  <a href="#dashboard">📊 Dashboard</a>
+  <a href="login.html" onclick="logout()">🔐 Logout</a>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark px-4 py-3">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <button class="btn btn-dark me-2" id="sidebarBtn">
+        <i class="bi bi-list fs-3"></i>
+      </button>
+      <a class="navbar-brand mb-0" href="#">SwiftCafe</a>
+    </div>
+    <div>
+      <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Profile Section -->
+<div class="container my-5">
+  <div class="profile-card text-center p-4">
+    <img src="pfp profile picture.jpg" alt="Profile Picture" class="profile-pic mb-3">
+    <h2 id="userName">John Doe</h2>
+    <p id="userEmail">john.doe@example.com</p>
+    <button class="btn btn-edit my-2" onclick="editProfile()">✏️ Edit Profile</button>
+
+    <div class="row text-start mt-4">
+      <div class="col-md-6">
+        <p><b>🎂 Date of Birth:</b> <span id="dob">N/A</span></p>
+      </div>
+      <div class="col-md-6">
+        <p><b>⭐ Loyalty Points:</b> <span id="points">0</span></p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Fetch profile data from backend
+async function loadProfile() {
+  try {
+    const res = await fetch('http://localhost:3000/profile', {
+      method: 'GET',
+      credentials: 'include' // Important: send cookies for session
+    });
+
+    if (res.status === 401) {
+      alert("Please login first!");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const user = await res.json();
+    document.getElementById("userName").textContent = user.name;
+    document.getElementById("userEmail").textContent = user.email;
+    document.getElementById("dob").textContent = user.dob || 'N/A';
+    document.getElementById("points").textContent = user.points || 0;
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to load profile. Please try again.");
+  }
+}
+
+loadProfile();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
